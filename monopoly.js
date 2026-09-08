@@ -2280,138 +2280,180 @@ function unmortgage(index) {
 
 
 function land(increasedRent) {
-	increasedRent = !!increasedRent; // Cast increasedRent to a boolean value. It is used for the ADVANCE TO THE NEAREST RAILROAD/UTILITY Chance cards.
+    increasedRent = !!increasedRent; // Cast increasedRent to a boolean value. It is used for the ADVANCE TO THE NEAREST RAILROAD/UTILITY Chance cards.
 
-	var p = player[turn];
-	var s = square[p.position];
+    var p = player[turn];
+    var s = square[p.position];
 
-	var die1 = game.getDie(1);
-	var die2 = game.getDie(2);
+    var die1 = game.getDie(1);
+    var die2 = game.getDie(2);
 
-	$("#landed").show();
-	document.getElementById("landed").innerHTML = "You landed on " + s.name + ".";
-	s.landcount++;
-	addAlert(p.name + " landed on " + s.name + ".");
+    $("#landed").show();
+    document.getElementById("landed").innerHTML = "You landed on " + s.name + ".";
+    s.landcount++;
+    addAlert(p.name + " landed on " + s.name + ".");
 
-	// Allow player to buy the property on which he landed.
-	if (s.price !== 0 && s.owner === 0) {
+    // Allow player to buy the property on which he landed.
+    if (s.price !== 0 && s.owner === 0) {
 
-		if (!p.human) {
+        if (!p.human) {
 
-			if (p.AI.buyProperty(p.position)) {
-				buy();
-			}
-		} else {
-			document.getElementById("landed").innerHTML = "<div>You landed on <a href='javascript:void(0);' onmouseover='showdeed(" + p.position + ");' onmouseout='hidedeed();' class='statscellcolor'>" + s.name + "</a>.<input type='button' onclick='buy();' value='Buy ($" + s.price + ")' title='Buy " + s.name + " for " + s.pricetext + ".'/></div>";
-		}
+            if (p.AI.buyProperty(p.position)) {
+                buy();
+            }
+        } else {
+            document.getElementById("landed").innerHTML = "<div>You landed on <a href='javascript:void(0);' onmouseover='showdeed(" + p.position + ");' onmouseout='hidedeed();' class='statscellcolor'>" + s.name + "</a>.<input type='button' onclick='buy();' value='Buy ($" + s.price + ")' title='Buy " + s.name + " for " + s.pricetext + ".'/></div>";
+        }
 
 
-		game.addPropertyToAuctionQueue(p.position);
-	}
+        game.addPropertyToAuctionQueue(p.position);
+    }
 
-	// Collect rent
-	if (s.owner !== 0 && s.owner != turn && !s.mortgage) {
-		var groupowned = true;
-		var rent;
+    // Collect rent & Process Takeover
+    if (s.owner !== 0 && s.owner != turn && !s.mortgage) {
+        var groupowned = true;
+        var rent;
 
-		// Railroads
-		if (p.position == 5 || p.position == 15 || p.position == 25 || p.position == 35) {
-			if (increasedRent) {
-				rent = 25;
-			} else {
-				rent = 12.5;
-			}
+        // Railroads
+        if (p.position == 5 || p.position == 15 || p.position == 25 || p.position == 35) {
+            if (increasedRent) {
+                rent = 25;
+            } else {
+                rent = 12.5;
+            }
 
-			if (s.owner == square[5].owner) {
-				rent *= 2;
-			}
-			if (s.owner == square[15].owner) {
-				rent *= 2;
-			}
-			if (s.owner == square[25].owner) {
-				rent *= 2;
-			}
-			if (s.owner == square[35].owner) {
-				rent *= 2;
-			}
+            if (s.owner == square[5].owner) {
+                rent *= 2;
+            }
+            if (s.owner == square[15].owner) {
+                rent *= 2;
+            }
+            if (s.owner == square[25].owner) {
+                rent *= 2;
+            }
+            if (s.owner == square[35].owner) {
+                rent *= 2;
+            }
 
-		} else if (p.position === 12) {
-			if (increasedRent || square[28].owner == s.owner) {
-				rent = (die1 + die2) * 10;
-			} else {
-				rent = (die1 + die2) * 4;
-			}
+        } else if (p.position === 12) {
+            if (increasedRent || square[28].owner == s.owner) {
+                rent = (die1 + die2) * 10;
+            } else {
+                rent = (die1 + die2) * 4;
+            }
 
-		} else if (p.position === 28) {
-			if (increasedRent || square[12].owner == s.owner) {
-				rent = (die1 + die2) * 10;
-			} else {
-				rent = (die1 + die2) * 4;
-			}
+        } else if (p.position === 28) {
+            if (increasedRent || square[12].owner == s.owner) {
+                rent = (die1 + die2) * 10;
+            } else {
+                rent = (die1 + die2) * 4;
+            }
 
-		} else {
+        } else {
 
-			for (var i = 0; i < 40; i++) {
-				sq = square[i];
-				if (sq.groupNumber == s.groupNumber && sq.owner != s.owner) {
-					groupowned = false;
-				}
-			}
+            for (var i = 0; i < 40; i++) {
+                sq = square[i];
+                if (sq.groupNumber == s.groupNumber && sq.owner != s.owner) {
+                    groupowned = false;
+                }
+            }
 
-			if (!groupowned) {
-				rent = s.baserent;
-			} else {
-				if (s.house === 0) {
-					rent = s.baserent * 2;
-				} else {
-					rent = s["rent" + s.house];
-				}
-			}
-		}
+            if (!groupowned) {
+                rent = s.baserent;
+            } else {
+                if (s.house === 0) {
+                    rent = s.baserent * 2;
+                } else {
+                    rent = s["rent" + s.house];
+                }
+            }
+        }
 
-		addAlert(p.name + " paid $" + rent + " rent to " + player[s.owner].name + ".");
-		p.pay(rent, s.owner);
-		player[s.owner].money += rent;
+        addAlert(p.name + " paid $" + rent + " rent to " + player[s.owner].name + ".");
+        p.pay(rent, s.owner);
+        player[s.owner].money += rent;
 
-		document.getElementById("landed").innerHTML = "You landed on " + s.name + ". " + player[s.owner].name + " collected $" + rent + " rent.";
-	} else if (s.owner > 0 && s.owner != turn && s.mortgage) {
-		document.getElementById("landed").innerHTML = "You landed on " + s.name + ". Property is mortgaged; no rent was collected.";
-	}
+        document.getElementById("landed").innerHTML = "You landed on " + s.name + ". " + player[s.owner].name + " collected $" + rent + " rent.";
 
-	// City Tax
-	if (p.position === 4) {
-		citytax();
-	}
+        // ==========================================
+        // ADDED: GET RICH TAKEOVER MECHANIC
+        // ==========================================
+        var currentHouses = s.house || 0;
+        var targetOwner = player[s.owner];
 
-	// Go to jail. Go directly to Jail. Do not pass GO. Do not collect $200.
-	if (p.position === 30) {
-		updateMoney();
-		updatePosition();
+        // Hotel is Level 5 (Landmark). Takeover allowed ONLY if houses < 5
+        if (currentHouses < 5 && p.human) {
+            var totalPropertyValue = s.price + (currentHouses * (s.houseprice || 0));
+            var takeoverCost = Math.floor(rent + (totalPropertyValue * 1.5));
 
-		if (p.human) {
-			popup("<div>Go to jail. Go directly to Jail. Do not pass GO. Do not collect $200.</div>", gotojail);
-		} else {
-			gotojail();
-		}
+            if (p.money >= takeoverCost) {
+                var takeoverBtn = "<input type='button' onclick='takeoverProperty(" + p.position + ", " + takeoverCost + ");' value='Takeover ($" + takeoverCost + ")' style='margin-left:8px; background-color:#ef4444; color:white; font-weight:bold;' />";
+                document.getElementById("landed").innerHTML += takeoverBtn;
+            }
+        }
+        // ==========================================
 
-		return;
-	}
+    } else if (s.owner > 0 && s.owner != turn && s.mortgage) {
+        document.getElementById("landed").innerHTML = "You landed on " + s.name + ". Property is mortgaged; no rent was collected.";
+    }
 
-	// Luxury Tax
-	if (p.position === 38) {
-		luxurytax();
-	}
+    // City Tax
+    if (p.position === 4) {
+        citytax();
+    }
 
-	updateMoney();
-	updatePosition();
-	updateOwned();
+    // Go to jail. Go directly to Jail. Do not pass GO. Do not collect $200.
+    if (p.position === 30) {
+        updateMoney();
+        updatePosition();
 
-	if (!p.human) {
-		popup(p.AI.alertList, chanceCommunityChest);
-		p.AI.alertList = "";
-	} else {
-		chanceCommunityChest();
-	}
+        if (p.human) {
+            popup("<div>Go to jail. Go directly to Jail. Do not pass GO. Do not collect $200.</div>", gotojail);
+        } else {
+            gotojail();
+        }
+
+        return;
+    }
+
+    // Luxury Tax
+    if (p.position === 38) {
+        luxurytax();
+    }
+
+    updateMoney();
+    updatePosition();
+    updateOwned();
+
+    if (!p.human) {
+        popup(p.AI.alertList, chanceCommunityChest);
+        p.AI.alertList = "";
+    } else {
+        chanceCommunityChest();
+    }
+}
+
+// ==========================================
+// ADD THIS HELPER FUNCTION RIGHT BELOW land()
+// ==========================================
+function takeoverProperty(position, cost) {
+    var p = player[turn];
+    var s = square[position];
+    var previousOwner = player[s.owner];
+
+    if (p.money >= cost) {
+        p.pay(cost, s.owner);
+        previousOwner.money += cost;
+        s.owner = turn; // Transfer ownership to current player
+
+        addAlert(p.name + " TAKEOVER " + s.name + " from " + previousOwner.name + " for $" + cost + "!");
+        document.getElementById("landed").innerHTML = "You successfully took over " + s.name + "!";
+
+        updateMoney();
+        updateOwned();
+    } else {
+        alert("Not enough money for Takeover!");
+    }
 }
 
 function roll() {
