@@ -1278,6 +1278,42 @@ function popup(HTML, action, option) {
 }
 
 
+// ---------------------------------------------------------------------
+// Animates a player's token moving forward one square at a time instead
+// of jumping straight to the destination square. Handles passing GO
+// mid-animation exactly like the original instant-move logic did.
+// ---------------------------------------------------------------------
+var TOKEN_MOVE_STEP_DELAY = 220; // milliseconds per square
+
+function animateMove(p, steps, onComplete) {
+	var remaining = steps;
+
+	function step() {
+		if (remaining <= 0) {
+			if (typeof onComplete === "function") {
+				onComplete();
+			}
+			return;
+		}
+
+		p.position++;
+
+		if (p.position >= 40) {
+			p.position = 0;
+			p.money += 200;
+			addAlert(p.name + " collected a $200 salary for passing GO.");
+			updateMoney();
+		}
+
+		updatePosition();
+
+		remaining--;
+		setTimeout(step, TOKEN_MOVE_STEP_DELAY);
+	}
+
+	step();
+}
+
 function updatePosition() {
 	// Reset borders
 	document.getElementById("jail").style.border = "1px solid black";
@@ -2525,25 +2561,25 @@ function roll() {
 
 			p.jail = false;
 			p.jailroll = 0;
-			p.position = 10 + die1 + die2;
 			doublecount = 0;
 
 			addAlert(p.name + " rolled doubles to get out of jail.");
 
-			land();
+			p.position = 10;
+			animateMove(p, die1 + die2, land);
 		} else {
 			if (p.jailroll === 3) {
 
 				if (p.human) {
 					popup("<p>You must pay the $50 fine.</p>", function() {
 						payfifty();
-						player[turn].position=10 + die1 + die2;
-						land();
+						player[turn].position = 10;
+						animateMove(player[turn], die1 + die2, land);
 					});
 				} else {
 					payfifty();
-					p.position = 10 + die1 + die2;
-					land();
+					p.position = 10;
+					animateMove(p, die1 + die2, land);
 				}
 			} else {
 				$("#landed").show();
@@ -2560,17 +2596,8 @@ function roll() {
 	} else {
 		updateDice(die1, die2);
 
-		// Move player
-		p.position += die1 + die2;
-
-		// Collect $200 salary as you pass GO
-		if (p.position >= 40) {
-			p.position -= 40;
-			p.money += 200;
-			addAlert(p.name + " collected a $200 salary for passing GO.");
-		}
-
-		land();
+		// Move player, one square at a time.
+		animateMove(p, die1 + die2, land);
 	}
 }
 

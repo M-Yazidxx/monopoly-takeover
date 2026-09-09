@@ -1198,3 +1198,280 @@ select {
 		padding: 6px 10px;
 	}
 }
+
+/* =====================================================================
+   TOKEN STEP ANIMATION
+   Small "pop" so each step of the token's movement reads as a hop
+   rather than a static re-paint. Purely visual, no layout impact.
+   ===================================================================== */
+
+@keyframes tokenHop {
+	0%   { transform: scale(0.55); opacity: 0.4; }
+	55%  { transform: scale(1.18); opacity: 1; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+.cell-position {
+	border-radius: 50%;
+	border: 1px solid rgba(0,0,0,0.4);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	animation: tokenHop 0.22s ease-out;
+}
+
+/* =====================================================================
+   DARK THEME
+   Applies to both desktop and phone (the responsive rules above still
+   control layout/sizing; this layer only changes colors). Placed last
+   so it wins the cascade over every color declared earlier.
+   ===================================================================== */
+
+html, body {
+	background: #14161C;
+	color: #E7E9EE;
+}
+
+/* Board */
+
+#board {
+	background-color: #1B1E26;
+	border-color: #2A2E3A;
+	box-shadow: 0 6px 28px rgba(0,0,0,0.6);
+}
+
+.cell {
+	background-color: #20242E;
+}
+
+.board-corner,
+.board-top,
+.board-bottom,
+.board-left,
+.board-right {
+	background-color: #20242E;
+	border-color: #3A3F4C !important;
+}
+
+td {
+	border-color: #3A3F4C;
+	color: #EDEFF3;
+}
+
+.cell-name {
+	color: #EDEFF3;
+	text-shadow: 0px 0px 3px rgba(0,0,0,0.9), 0px 0px 3px rgba(0,0,0,0.9);
+}
+
+#jail {
+	border-color: #3A3F4C;
+	background-color: #20242E;
+}
+
+.board-center {
+	background-color: #171A21;
+}
+
+/* Enlarge / deed cards keep a light "paper" look on purpose (they mimic
+   real Monopoly cards), so they are intentionally left light for
+   readability and contrast against the dark board. */
+
+#deed-header,
+.enlarge-color,
+.enlarge-name,
+.enlarge-price,
+#deedcolor,
+#deedname {
+	background-color: #FDFBEF;
+	color: #222;
+}
+
+/* Money bar */
+
+#moneybar {
+	background-color: #1E212A;
+	border-color: #2E323F;
+}
+
+.money-bar-row td {
+	background-color: #1E212A;
+	border-bottom-color: #2A2E3A;
+	color: #E7E9EE;
+}
+
+#pname,
+#p1moneybar,
+#p2moneybar,
+#p3moneybar,
+#p4moneybar,
+#p5moneybar,
+#p6moneybar,
+#p7moneybar,
+#p8moneybar {
+	background-color: transparent;
+	color: #E7E9EE;
+}
+
+/* Setup screen */
+
+#setup {
+	background-color: #1B1E26;
+	color: #E7E9EE;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+
+.player-input:nth-of-type(odd) {
+	background: #22262F;
+}
+
+#noF5,
+#noscript,
+#refresh {
+	color: #C7CBD4;
+}
+
+/* Control panel */
+
+#control {
+	background-color: #1B1E26;
+	color: #E7E9EE;
+	box-shadow: 0 10px 36px rgba(0,0,0,0.7);
+}
+
+#menutable {
+	background-color: #21252F;
+	background-image: none;
+	border-color: #3A3F4C;
+}
+
+.menu-item {
+	border-right-color: #14161C;
+}
+
+.menu-item:hover {
+	background-image: none;
+	background-color: #2C313D;
+}
+
+#buy-menu-item {
+	color: #FFFFFF;
+}
+
+#trade-menu-item {
+	color: #7B8190;
+}
+
+#alert {
+	background-color: #12141A;
+	color: #D9DCE2;
+	border-color: #3A3F4C;
+}
+
+#landed {
+	background-color: #22262F;
+	color: #E7E9EE;
+	border-color: #3A3F4C;
+}
+
+#manage {
+	background-color: #1B1E26;
+	border-color: #3A3F4C;
+}
+
+#option {
+	background-color: #22262F;
+	color: #E7E9EE;
+}
+
+#owned {
+	background-color: #1B1E26;
+	color: #E7E9EE;
+}
+
+#quickstats {
+	background-color: #22262F;
+	border-color: #4A6FD4;
+	color: #E7E9EE;
+}
+
+.die-no-img {
+	border-color: #4A4F5D;
+	background-color: #22262F;
+	color: #E7E9EE;
+}
+
+/* Trade panel */
+
+#trade {
+	background-color: #1B1E26;
+	color: #E7E9EE;
+	box-shadow: 0 10px 36px rgba(0,0,0,0.7);
+}
+
+.trade-cell {
+	background-color: #22262F;
+	color: #E7E9EE;
+}
+
+/* Popup / stats dialogs */
+
+#popup,
+#stats {
+	background-color: #1B1E26;
+	color: #E7E9EE;
+	border-color: #2E323F;
+}
+
+.statscell {
+	background-color: #22262F;
+	border-color: #3A3F4C !important;
+	color: #E7E9EE;
+}
+
+.statscellname,
+.statsplayername {
+	color: #E7E9EE;
+}
+
+#popupbackground,
+#statsbackground {
+	background-color: #000000;
+}
+
+/* Form controls */
+
+input[type="text"],
+input:not([type]),
+select {
+	background-color: #22262F;
+	border-color: #3A3F4C;
+	color: #E7E9EE;
+}
+
+select option {
+	background-color: #22262F;
+	color: #E7E9EE;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #1B1E26;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #3A3F4C;
+	border-radius: 6px;
+}
+
+/* The per-player color <select> elements rely on inline style="color: X"
+   on each <option> (aqua, black, navy, etc.) to preview that color. Those
+   inline colors can't be overridden from CSS, so instead we keep just
+   THESE dropdowns' backgrounds light so dark options (black, navy, maroon)
+   stay legible, exactly like the original light-theme design intended. */
+select[id$="color"],
+select[id$="color"] option {
+	background-color: #FFFFFF;
+	color: #222;
+}
